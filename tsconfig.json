@@ -16,8 +16,9 @@
       "*": ["node_modules/*", "src/types/*"],
       "@/*": ["src/*"]
     },
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "types": ["node", "jest", "uuid"],
+    "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src/**/*", "src/__tests__/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 } 

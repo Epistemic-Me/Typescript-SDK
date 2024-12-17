@@ -1,15 +1,8 @@
-import '@testing-library/jest-dom';
+import { jest, beforeEach } from '@jest/globals';
 import { TextEncoder, TextDecoder } from 'util';
 
 // Mock console.error to be silent during tests
-const originalError = console.error;
-beforeAll(() => {
-  console.error = jest.fn();
-});
-
-afterAll(() => {
-  console.error = originalError;
-});
+jest.spyOn(console, 'error').mockImplementation(() => {});
 
 // Polyfill TextEncoder/TextDecoder
 global.TextEncoder = TextEncoder as typeof global.TextEncoder;
@@ -54,11 +47,26 @@ class MockResponse {
 }
 
 // Mock fetch globally
-global.fetch = jest.fn();
+const mockFetch = jest.fn(
+  async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => 
+    new MockResponse() as unknown as Response
+);
+global.fetch = mockFetch as unknown as typeof fetch;
+
 global.Headers = Headers;
-global.Request = jest.fn();
+
+const mockRequest = jest.fn(
+  (_input: RequestInfo | URL, _init?: RequestInit): Request => ({
+    url: typeof _input === 'string' ? _input : _input.toString(),
+    method: _init?.method || 'GET',
+    headers: new Headers(_init?.headers),
+  } as unknown as Request)
+);
+global.Request = mockRequest as unknown as typeof Request;
+
 global.Response = MockResponse as unknown as typeof Response;
 
+// Reset mocks before each test
 beforeEach(() => {
   jest.resetAllMocks();
 });
