@@ -38,7 +38,8 @@
     "@bufbuild/protobuf": "^1.10.0",
     "@connectrpc/connect": "^1.6.1",
     "@connectrpc/connect-web": "^1.6.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@types/uuid": "^9.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -50,7 +51,6 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.0.0",
-    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",

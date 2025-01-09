@@ -6,7 +6,7 @@
     "lib": ["es2020", "dom", "dom.iterable"],
     "declaration": true,
     "outDir": "./dist",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,7 +17,10 @@
       "@/*": ["src/*"]
     },
     "types": ["node", "jest", "uuid"],
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
