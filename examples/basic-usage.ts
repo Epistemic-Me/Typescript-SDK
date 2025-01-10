@@ -1,5 +1,4 @@
-import { EpistemicMeClient } from '../src/client/grpcClient';
-import { DialecticType } from '../src/generated/proto/models/dialectic_pb';
+import { EpistemicMeClient, DialecticType } from '@epistemicme/sdk';
 
 async function main() {
   const client = new EpistemicMeClient({

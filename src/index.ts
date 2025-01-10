@@ -7,10 +7,17 @@ export {
   UserAnswer,
   STATUS as DialecticStatus,
   InteractionType,
-  ActionType,
+  QuestionAnswerInteraction,
 } from './generated/proto/models/dialectic_pb';
 
 export {
+  Belief,
   BeliefType,
-  EpistemicEmotion,
 } from './generated/proto/models/beliefs_pb'; 
+
+export {
+  ActionType,
+  ObservationContext,
+  ConfidenceRating,
+  EpistemicEmotion,
+} from './generated/proto/models/predictive_processing_pb';
