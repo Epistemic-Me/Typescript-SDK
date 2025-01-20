@@ -21,3 +21,5 @@ export {
   ConfidenceRating,
   EpistemicEmotion,
 } from './generated/proto/models/predictive_processing_pb';
+
+export { InteractionData } from "./generated/proto/models/dialectic_pb";

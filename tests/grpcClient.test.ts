@@ -1,9 +1,9 @@
-import { EpistemicMeClient } from '../src/client/grpcClient';
 import { createConnectTransport } from '@connectrpc/connect-web';
-import { createClient } from '@connectrpc/connect';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
-// Mock both connect-web and connect
+import { EpistemicMeClient } from '../src/client/grpcClient';
+
+// Keep existing mocks
 jest.mock('@connectrpc/connect-web', () => ({
   createConnectTransport: jest.fn()
 }));
@@ -22,6 +22,7 @@ describe('EpistemicMeClient', () => {
     });
   });
 
+  // Keep existing tests
   it('configures transport for CORS', () => {
     expect(createConnectTransport).toHaveBeenCalledWith(expect.objectContaining({
       baseUrl: 'http://localhost:8080',

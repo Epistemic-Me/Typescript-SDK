@@ -1,6 +1,10 @@
-import { createConnectTransport } from "@connectrpc/connect-web";
-import { createClient } from "@connectrpc/connect";
-import { EpistemicMeService } from "../generated/proto/epistemic_me_connect";
+// External dependencies
+import { createClient } from '@connectrpc/connect';
+import type { Interceptor } from '@connectrpc/connect';
+import { createConnectTransport } from '@connectrpc/connect-web';
+
+// Generated proto imports
+import { EpistemicMeService } from '../generated/proto/epistemic_me_connect';
 import {
   CreateBeliefRequest,
   CreateDialecticRequest,
@@ -23,10 +27,10 @@ import {
   GetSelfModelResponse,
   AddPhilosophyRequest,
   AddPhilosophyResponse,
-} from "../generated/proto/epistemic_me_pb";
-import { DialecticType, UserAnswer } from "../generated/proto/models/dialectic_pb";
-import { Interceptor } from "@connectrpc/connect";
-import { SelfModel } from "../generated/proto/models/self_model_pb";
+  PreprocessQARequest,
+  PreprocessQAResponse,
+} from '../generated/proto/epistemic_me_pb';
+import { DialecticType, UserAnswer } from '../generated/proto/models/dialectic_pb';
 
 function apiKeyInterceptor(apiKey?: string): Interceptor {
   return (next) => async (req) => {
@@ -35,15 +39,6 @@ function apiKeyInterceptor(apiKey?: string): Interceptor {
     }
     return await next(req);
   };
-}
-
-function getOriginFromUrl(url: string): string {
-  try {
-    const urlObj = new URL(url);
-    return `${urlObj.protocol}//${urlObj.host}`;
-  } catch {
-    return 'http://localhost:3000'; // Fallback
-  }
 }
 
 export interface ClientConfig {
@@ -69,13 +64,14 @@ export interface IEpistemicMeClient {
     selfModelId: string;
     philosophyId: string;
   }): Promise<AddPhilosophyResponse>;
+  preprocessQA(questionBlob: string, answerBlob: string): Promise<PreprocessQAResponse>;
 }
 
 export class EpistemicMeClient implements IEpistemicMeClient {
-  private client: any;
-  private baseUrl: string;
+  private client: ReturnType<typeof createClient<typeof EpistemicMeService>>;
+  private readonly baseUrl: string;
   private apiKey?: string;
-  private origin: string;
+  private readonly origin: string;
 
   constructor(config: ClientConfig) {
     this.baseUrl = config.baseUrl;
@@ -196,19 +192,25 @@ export class EpistemicMeClient implements IEpistemicMeClient {
     }
   }
 
-  async updateDialectic(params: {
-    userId: string;
-    dialecticId: string;
-    answer: UserAnswer;
+  async updateDialectic(request: {
+    dialecticId: string,
+    userId: string,
+    answer: UserAnswer,
+    customQuestion?: string,
+    questionBlob?: string,
+    answerBlob?: string
   }): Promise<UpdateDialecticResponse> {
-    const request = new UpdateDialecticRequest({
-      id: params.dialecticId,
-      answer: params.answer,
-      selfModelId: params.userId
+    const req = new UpdateDialecticRequest({
+      id: request.dialecticId,
+      selfModelId: request.userId,
+      answer: request.answer,
+      customQuestion: request.customQuestion,
+      questionBlob: request.questionBlob,
+      answerBlob: request.answerBlob
     });
 
     try {
-      return await this.client.updateDialectic(request);
+      return await this.client.updateDialectic(req);
     } catch (error) {
       console.error("Error updating dialectic:", error);
       throw error;
@@ -303,6 +305,30 @@ export class EpistemicMeClient implements IEpistemicMeClient {
       return await this.client.addPhilosophy(request);
     } catch (error) {
       console.error("Error adding philosophy:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Preprocesses question-answer pairs from raw text
+   * @param questionBlob - The raw text containing questions
+   * @param answerBlob - The raw text containing answers
+   * @returns Promise containing processed question-answer pairs
+   */
+  public async preprocessQA(questionBlob: string, answerBlob: string): Promise<PreprocessQAResponse> {
+    if (!questionBlob || !answerBlob) {
+      throw new Error('Question blob and answer blob are required');
+    }
+
+    const request = new PreprocessQARequest({
+      questionBlobs: [questionBlob.trim()],
+      answerBlobs: [answerBlob.trim()]
+    });
+
+    try {
+      return await this.client.preprocessQA(request);
+    } catch (error) {
+      console.error("Error preprocessing Q&A:", error);
       throw error;
     }
   }

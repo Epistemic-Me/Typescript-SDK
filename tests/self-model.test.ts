@@ -1,14 +1,9 @@
-import { EpistemicMeClient } from '../src/client/grpcClient';
-import { v4 as uuidv4 } from 'uuid';
+// Group 1: External imports
 import { describe, test, expect, beforeAll } from '@jest/globals';
-import { 
-  ListDialecticsResponse,
-  CreateDeveloperResponse,
-  GetDeveloperResponse,
-  CreateSelfModelResponse,
-  GetSelfModelResponse
-} from '../src/generated/proto/epistemic_me_pb';
-import { SelfModel } from '../src/generated/proto/models/self_model_pb';
+import { v4 as uuidv4 } from 'uuid';
+
+// Group 2: Internal client imports
+import { EpistemicMeClient } from '../src/client/grpcClient';
 
 describe('SelfModel Integration Tests', () => {
   let client: EpistemicMeClient;
