@@ -27,8 +27,8 @@ import {
   GetSelfModelResponse,
   AddPhilosophyRequest,
   AddPhilosophyResponse,
-  PreprocessQARequest,
-  PreprocessQAResponse,
+  PreprocessQuestionAnswerRequest,
+  PreprocessQuestionAnswerResponse,
 } from '../generated/proto/epistemic_me_pb';
 import { DialecticType, UserAnswer } from '../generated/proto/models/dialectic_pb';
 
@@ -64,7 +64,7 @@ export interface IEpistemicMeClient {
     selfModelId: string;
     philosophyId: string;
   }): Promise<AddPhilosophyResponse>;
-  preprocessQA(questionBlob: string, answerBlob: string): Promise<PreprocessQAResponse>;
+  preprocessQuestionAnswer(questionBlob: string, answerBlob: string): Promise<PreprocessQuestionAnswerResponse>;
 }
 
 export class EpistemicMeClient implements IEpistemicMeClient {
@@ -315,18 +315,18 @@ export class EpistemicMeClient implements IEpistemicMeClient {
    * @param answerBlob - The raw text containing answers
    * @returns Promise containing processed question-answer pairs
    */
-  public async preprocessQA(questionBlob: string, answerBlob: string): Promise<PreprocessQAResponse> {
+  public async preprocessQuestionAnswer(questionBlob: string, answerBlob: string): Promise<PreprocessQuestionAnswerResponse> {
     if (!questionBlob || !answerBlob) {
       throw new Error('Question blob and answer blob are required');
     }
 
-    const request = new PreprocessQARequest({
+    const request = new PreprocessQuestionAnswerRequest({
       questionBlobs: [questionBlob.trim()],
       answerBlobs: [answerBlob.trim()]
     });
 
     try {
-      return await this.client.preprocessQA(request);
+      return await this.client.preprocessQuestionAnswer(request);
     } catch (error) {
       console.error("Error preprocessing Q&A:", error);
       throw error;

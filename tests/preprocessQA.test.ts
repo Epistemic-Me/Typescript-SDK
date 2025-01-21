@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { EpistemicMeClient } from "../src/client/grpcClient";
 
-describe('PreprocessQA Integration Tests', () => {
+describe('PreprocessQuestionAnswer Integration Tests', () => {
   let client: EpistemicMeClient;
 
   beforeAll(async () => {
@@ -45,7 +45,7 @@ describe('PreprocessQA Integration Tests', () => {
       No, I fall asleep easily within 10 minutes.
     `.trim();
 
-    const sleepResponse = await client.preprocessQA(sleepQuestions, sleepAnswers);
+    const sleepResponse = await client.preprocessQuestionAnswer(sleepQuestions, sleepAnswers);
     expect(sleepResponse.qaPairs).toBeDefined();
     expect(sleepResponse.qaPairs.length).toBeGreaterThan(0);
 
@@ -65,7 +65,7 @@ describe('PreprocessQA Integration Tests', () => {
       My diet gives me energy and keeps me healthy as measured by my blood tests.
     `.trim();
 
-    const dietResponse = await client.preprocessQA(dietQuestions, dietAnswers);
+    const dietResponse = await client.preprocessQuestionAnswer(dietQuestions, dietAnswers);
     expect(dietResponse.qaPairs).toBeDefined();
     expect(dietResponse.qaPairs.length).toBeGreaterThan(0);
 
@@ -92,11 +92,11 @@ describe('PreprocessQA Integration Tests', () => {
   }, 15000);
 
   test('handles empty input appropriately', async () => {
-    await expect(client.preprocessQA('', 'Some answer'))
+    await expect(client.preprocessQuestionAnswer('', 'Some answer'))
       .rejects
       .toThrow('Question blob and answer blob are required');
 
-    await expect(client.preprocessQA('Some question', ''))
+    await expect(client.preprocessQuestionAnswer('Some question', ''))
       .rejects
       .toThrow('Question blob and answer blob are required');
   }, 10000);
@@ -112,7 +112,7 @@ describe('PreprocessQA Integration Tests', () => {
       A: I enjoy sunny days.
     `.trim();
 
-    const response = await client.preprocessQA(questionBlob, answerBlob);
+    const response = await client.preprocessQuestionAnswer(questionBlob, answerBlob);
     expect(response.qaPairs).toBeDefined();
     expect(response.qaPairs.length).toBeGreaterThan(0);
   }, 10000);
