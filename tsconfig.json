@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "lib": ["es2020", "dom", "dom.iterable"],
     "declaration": true,
     "outDir": "./dist",
@@ -20,8 +20,9 @@
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
-    ]
+    ],
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*", "tests/**/*"],
+  "include": ["src/**/*", "tests/**/*", "proto/**/*", "src/types/**/*"],
   "exclude": ["node_modules", "dist"]
 } 
