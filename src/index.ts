@@ -8,6 +8,7 @@ export {
   STATUS as DialecticStatus,
   InteractionType,
   QuestionAnswerInteraction,
+  LearningObjective,
 } from './generated/proto/models/dialectic_pb';
 
 export {
