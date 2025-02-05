@@ -30,7 +30,11 @@ import {
   PreprocessQuestionAnswerRequest,
   PreprocessQuestionAnswerResponse,
 } from '../generated/proto/epistemic_me_pb';
-import { DialecticType, UserAnswer } from '../generated/proto/models/dialectic_pb';
+import { 
+  DialecticType, 
+  UserAnswer,
+  LearningObjective 
+} from '../generated/proto/models/dialectic_pb';
 
 function apiKeyInterceptor(apiKey?: string): Interceptor {
   return (next) => async (req) => {
@@ -168,12 +172,14 @@ export class EpistemicMeClient implements IEpistemicMeClient {
   async createDialectic(params: {
     userId: string;
     dialecticType: DialecticType;
+    learningObjective?: LearningObjective;
   }): Promise<CreateDialecticResponse> {
     this.validateApiKey();
     
     const request = new CreateDialecticRequest({
       selfModelId: params.userId,
-      dialecticType: params.dialecticType
+      dialecticType: params.dialecticType,
+      learningObjective: params.learningObjective
     });
 
     try {
