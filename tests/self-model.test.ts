@@ -142,4 +142,50 @@ describe('SelfModel Integration Tests', () => {
 
     expect(response.updatedSelfModel.philosophies).toContain('phil_105');
   });
+
+  test('create philosophy', async () => {
+    // Create a philosophy
+    const createResponse = await client.createPhilosophy({
+      description: '# Test Philosophy\n\n## Narrative\n[[C: Context1]] [[S: state1]] → [[S: state2]]',
+      extrapolateContexts: true
+    });
+
+    expect(createResponse).toBeDefined();
+    expect(createResponse.philosophy).toBeDefined();
+    expect(createResponse.philosophy?.description).toBe('# Test Philosophy\n\n## Narrative\n[[C: Context1]] [[S: state1]] → [[S: state2]]');
+    // New assertions for observation contexts
+    expect(createResponse.extrapolatedObservationContexts).toBeDefined();
+    expect(Array.isArray(createResponse.extrapolatedObservationContexts)).toBe(true);
+    expect(createResponse.extrapolatedObservationContexts.length).toBeGreaterThan(0);
+    const contextNames = createResponse.extrapolatedObservationContexts.map((ctx: any) => ctx.name);
+    expect(contextNames).toEqual(expect.arrayContaining(['Context1', 'state1', 'state2']));
+  });
+
+  test('update philosophy', async () => {
+    // First create a philosophy
+    const createResponse = await client.createPhilosophy({
+      description: '# UpdateMe\n\n## Narrative\n[[C: ContextA]] [[S: stateA]] → [[S: stateB]]',
+      extrapolateContexts: false
+    });
+    const philosophyId = createResponse.philosophy?.id;
+    expect(philosophyId).toBeDefined();
+
+    // Now update the philosophy
+    const updateResponse = await client.updatePhilosophy({
+      philosophyId: philosophyId!,
+      description: '# Updated Philosophy\n\n## Narrative\n[[C: Context2]] [[S: state3]] → [[S: state4]]',
+      extrapolateContexts: true
+    });
+
+    expect(updateResponse).toBeDefined();
+    expect(updateResponse.philosophy).toBeDefined();
+    expect(updateResponse.philosophy?.description).toBe('# Updated Philosophy\n\n## Narrative\n[[C: Context2]] [[S: state3]] → [[S: state4]]');
+    expect(updateResponse.philosophy?.id).toBe(philosophyId);
+    // New assertions for observation contexts
+    expect(updateResponse.extrapolatedObservationContexts).toBeDefined();
+    expect(Array.isArray(updateResponse.extrapolatedObservationContexts)).toBe(true);
+    expect(updateResponse.extrapolatedObservationContexts.length).toBeGreaterThan(0);
+    const updateContextNames = updateResponse.extrapolatedObservationContexts.map((ctx: any) => ctx.name);
+    expect(updateContextNames).toEqual(expect.arrayContaining(['Context2', 'state3', 'state4']));
+  });
 }); 

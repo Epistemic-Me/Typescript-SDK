@@ -29,6 +29,10 @@ import {
   AddPhilosophyResponse,
   PreprocessQuestionAnswerRequest,
   PreprocessQuestionAnswerResponse,
+  CreatePhilosophyRequest,
+  CreatePhilosophyResponse,
+  UpdatePhilosophyRequest,
+  UpdatePhilosophyResponse,
 } from '../generated/proto/epistemic_me_pb';
 import { 
   DialecticType, 
@@ -69,6 +73,15 @@ export interface IEpistemicMeClient {
     philosophyId: string;
   }): Promise<AddPhilosophyResponse>;
   preprocessQuestionAnswer(questionBlob: string, answerBlob: string): Promise<PreprocessQuestionAnswerResponse>;
+  createPhilosophy(params: {
+    description: string;
+    extrapolateContexts?: boolean;
+  }): Promise<CreatePhilosophyResponse>;
+  updatePhilosophy(params: {
+    philosophyId: string;
+    description: string;
+    extrapolateContexts?: boolean;
+  }): Promise<UpdatePhilosophyResponse>;
 }
 
 export class EpistemicMeClient implements IEpistemicMeClient {
@@ -335,6 +348,42 @@ export class EpistemicMeClient implements IEpistemicMeClient {
       return await this.client.preprocessQuestionAnswer(request);
     } catch (error) {
       console.error("Error preprocessing Q&A:", error);
+      throw error;
+    }
+  }
+
+  async createPhilosophy(params: {
+    description: string;
+    extrapolateContexts?: boolean;
+  }): Promise<CreatePhilosophyResponse> {
+    this.validateApiKey();
+    const request = new CreatePhilosophyRequest({
+      description: params.description,
+      extrapolateContexts: params.extrapolateContexts ?? false,
+    });
+    try {
+      return await this.client.createPhilosophy(request);
+    } catch (error) {
+      console.error('Error creating philosophy:', error);
+      throw error;
+    }
+  }
+
+  async updatePhilosophy(params: {
+    philosophyId: string;
+    description: string;
+    extrapolateContexts?: boolean;
+  }): Promise<UpdatePhilosophyResponse> {
+    this.validateApiKey();
+    const request = new UpdatePhilosophyRequest({
+      philosophyId: params.philosophyId,
+      description: params.description,
+      extrapolateContexts: params.extrapolateContexts ?? false,
+    });
+    try {
+      return await this.client.updatePhilosophy(request);
+    } catch (error) {
+      console.error('Error updating philosophy:', error);
       throw error;
     }
   }
